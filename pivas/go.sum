@@ -326,12 +326,8 @@ github.com/stretchr/testify v1.5.1/go.mod h1:5W2xD1RspED5o8YsWQXVCued0rvSQ+mT+I5
 github.com/stretchr/testify v1.6.1/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
 github.com/stretchr/testify v1.7.0/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
 github.com/subosito/gotenv v1.2.0/go.mod h1:N0PQaV/YGNqwC0u51sEeR/aUtSLEXKX9iv69rRypqCw=
-github.com/toolkits/file v0.0.0-20160325033739-a5b3c5147e07 h1:d/VUIMNTk65Xz69htmRPNfjypq2uNRqVsymcXQu6kKk=
-github.com/toolkits/file v0.0.0-20160325033739-a5b3c5147e07/go.mod h1:FbXpUxsx5in7z/OrWFDdhYetOy3/VGIJsVHN9G7RUPA=
-github.com/toolkits/slice v0.0.0-20141116085117-e44a80af2484 h1:ERmNDajjCusGqV3uLhlHhRNpvQiGM1S6pd0RSe3LP+w=
-github.com/toolkits/slice v0.0.0-20141116085117-e44a80af2484/go.mod h1:2ZKxkgYEh//pN54EFSkJBak63sg0LxQQFjQmpEwxQx0=
-github.com/toolkits/sys v0.0.0-20170615103026-1f33b217ffaf h1:1/LnhAvvotcSWDl1ntwUePzLXcyHjAzZ0Ih0F+kKGZU=
-github.com/toolkits/sys v0.0.0-20170615103026-1f33b217ffaf/go.mod h1:GejnAYmB2Pr/2fWKp7OGdd6MzuXvRwClmdQAnvnr++I=
+github.com/toolkits/container v0.0.0-20151219225805-ba7d73adeaca h1:bUNxqD2ULaaoBA5RLX6YJThj2c75S1BUMT4BmzqkE40=
+github.com/toolkits/container v0.0.0-20151219225805-ba7d73adeaca/go.mod h1:Z1hsEp8J9dDg5gRss4uixVSS19XDA4dw6S9ZcBm+hB8=
 github.com/tv42/httpunix v0.0.0-20150427012821-b75d8614f926/go.mod h1:9ESjWnEqriFuLhtthL60Sar/7RFoluCcXsuvEwTV5KM=
 github.com/yuin/goldmark v1.1.25/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
 github.com/yuin/goldmark v1.1.27/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=

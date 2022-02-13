@@ -27,11 +27,19 @@ type PluginConfig struct {
 	LogDir  string `json:"logs"`
 }
 
+type TransferConfig struct {
+	Enabled  bool     `json:"enabled"`
+	Addrs    []string `json:"addrs"`
+	Interval int      `json:"interval"`
+	Timeout  int      `json:"timeout"`
+}
+
 type GlobalConfig struct {
 	Debug         bool              `json:"debug"`
 	Hostname      string            `json:"hostname"`
 	Plugin        *PluginConfig     `json:"plugin"`
 	Heartbeat     *HeartbeatConfig  `json:"heartbeat"`
+	Transfer      *TransferConfig   `json:"transfer"`
 	IP            string            `json:"ip"`
 	DefaultTags   map[string]string `json:"default_tags"`
 	IgnoreMetrics map[string]bool   `json:"ignore"`
@@ -39,7 +47,7 @@ type GlobalConfig struct {
 
 func ParseConfig(cfg string) error {
 	if cfg == "" {
-		return errors.New("use -c to specify configuration file")
+		return errors.New("use -c to specify pivas file")
 	}
 
 	if !file.IsExist(cfg) {

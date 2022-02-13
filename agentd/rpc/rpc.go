@@ -3,7 +3,6 @@ package rpc
 import (
 	"errors"
 	"log"
-	"marmota/agentd/cc"
 	"math"
 	"net"
 	"net/rpc"
@@ -13,14 +12,14 @@ import (
 	"github.com/hashicorp/net-rpc-msgpackrpc"
 )
 
-type Client struct {
+type ConnRPCClient struct {
 	sync.Mutex
-	rpcAddr   string
+	RpcAddr   string
 	rpcClient *rpc.Client
 	Timeout   time.Duration
 }
 
-func (c *Client) serverConn() error {
+func (c *ConnRPCClient) serverConn() error {
 	if c.rpcClient != nil {
 		return nil
 	}
@@ -32,9 +31,9 @@ func (c *Client) serverConn() error {
 			return nil
 		}
 
-		conn, err := net.DialTimeout("tcp", c.rpcAddr, c.Timeout)
+		conn, err := net.DialTimeout("tcp", c.RpcAddr, c.Timeout)
 		if err != nil {
-			log.Printf("dial %s fail: %v", c.rpcAddr, err)
+			log.Printf("dial %s fail: %v", c.RpcAddr, err)
 			if retry > 3 {
 				return err
 			}
@@ -47,14 +46,14 @@ func (c *Client) serverConn() error {
 	}
 }
 
-func (c *Client) close() {
+func (c *ConnRPCClient) close() {
 	if c.rpcClient != nil {
 		_ = c.rpcClient.Close()
 		c.rpcClient = nil
 	}
 }
 
-func (c *Client) Call(method string, args interface{}, reply interface{}) error {
+func (c *ConnRPCClient) Call(method string, args interface{}, reply interface{}) error {
 
 	c.Lock()
 	defer c.Unlock()
@@ -74,9 +73,9 @@ func (c *Client) Call(method string, args interface{}, reply interface{}) error 
 
 	select {
 	case <-time.After(timeout):
-		log.Printf("[WARN] rpc call timeout %v => %v", c.rpcClient, c.rpcAddr)
+		log.Printf("[WARN] rpc call timeout %v => %v", c.rpcClient, c.RpcAddr)
 		c.close()
-		return errors.New(c.rpcAddr + " rpc call timeout")
+		return errors.New(c.RpcAddr + " rpc call timeout")
 	case err := <-done:
 		if err != nil {
 			c.close()
@@ -87,9 +86,9 @@ func (c *Client) Call(method string, args interface{}, reply interface{}) error 
 	return nil
 }
 
-func NewRpcClient() *Client {
-	return &Client{
-		rpcAddr: cc.Config().Heartbeat.Addr,
-		Timeout: time.Duration(cc.Config().Heartbeat.Timeout) * time.Second,
+func NewRpcClient(addr string, timeout time.Duration) *ConnRPCClient {
+	return &ConnRPCClient{
+		RpcAddr: addr,
+		Timeout: timeout,
 	}
 }

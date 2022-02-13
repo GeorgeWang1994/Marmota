@@ -11,7 +11,7 @@ func IP() string {
 
 	LocalIp = cc.Config().IP
 	if LocalIp != "" {
-		// use ip in configuration
+		// use ip in pivas
 		return LocalIp
 	}
 	

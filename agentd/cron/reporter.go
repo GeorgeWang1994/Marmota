@@ -5,7 +5,7 @@ import (
 	"log"
 	"marmota/agentd/cc"
 	"marmota/agentd/gg"
-	"marmota/agentd/model"
+	"marmota/pkg/common/model"
 	"time"
 )
 
@@ -31,7 +31,7 @@ func reportAgentStatus(interval time.Duration) {
 		}
 
 		var resp model.RpcResponse
-		err = gg.RpcClient().Call("Agent.ReportStatus", req, &resp)
+		err = gg.HBSRpcClient().Call("Agent.ReportStatus", req, &resp)
 		if err != nil || resp.Code != 200 {
 			log.Println("call Agent.ReportStatus fail:", err, "Request:", req, "Response:", resp)
 		}
@@ -39,6 +39,3 @@ func reportAgentStatus(interval time.Duration) {
 		time.Sleep(interval)
 	}
 }
-
-//
-func report

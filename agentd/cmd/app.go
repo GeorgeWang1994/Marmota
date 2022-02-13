@@ -12,5 +12,7 @@ func initApp() error {
 	}
 
 	cron.ReportStatus()
+	cron.SyncBuiltinMetrics()
+	cron.SyncMinePlugins()
 	return nil
 }
