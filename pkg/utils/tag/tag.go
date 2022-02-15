@@ -2,8 +2,9 @@ package tag
 
 import (
 	"bytes"
-	"marmota/pkg/utils/pool"
+	"marmota/pkg/utils/bufpool"
 	"sort"
+	"strings"
 )
 
 func SortedTags(tags map[string]string) string {
@@ -17,9 +18,9 @@ func SortedTags(tags map[string]string) string {
 		return ""
 	}
 
-	ret := pool.BufferPool.Get().(*bytes.Buffer)
+	ret := bufpool.BufferPool.Get().(*bytes.Buffer)
 	ret.Reset()
-	defer pool.BufferPool.Put(ret)
+	defer bufpool.BufferPool.Put(ret)
 
 	if size == 1 {
 		for k, v := range tags {
@@ -51,3 +52,22 @@ func SortedTags(tags map[string]string) string {
 	return ret.String()
 }
 
+func TagsDict(s string) map[string]string {
+	if s == "" {
+		return map[string]string{}
+	}
+
+	if strings.ContainsRune(s, ' ') {
+		s = strings.Replace(s, " ", "", -1)
+	}
+
+	tagDict := make(map[string]string)
+	tags := strings.Split(s, ",")
+	for _, tag := range tags {
+		idx := strings.IndexRune(tag, '=')
+		if idx != -1 {
+			tagDict[tag[:idx]] = tag[idx+1:]
+		}
+	}
+	return tagDict
+}

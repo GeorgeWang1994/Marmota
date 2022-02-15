@@ -73,9 +73,9 @@ func (c *ConnRPCClient) Call(method string, args interface{}, reply interface{})
 
 	select {
 	case <-time.After(timeout):
-		log.Printf("[WARN] rpc call timeout %v => %v", c.rpcClient, c.RpcAddr)
+		log.Printf("[WARN] connpool call timeout %v => %v", c.rpcClient, c.RpcAddr)
 		c.close()
-		return errors.New(c.RpcAddr + " rpc call timeout")
+		return errors.New(c.RpcAddr + " connpool call timeout")
 	case err := <-done:
 		if err != nil {
 			c.close()

@@ -1,4 +1,4 @@
-package pool
+package bufpool
 
 import (
 	"bytes"
@@ -6,4 +6,3 @@ import (
 )
 
 var BufferPool = sync.Pool{New: func() interface{} { return new(bytes.Buffer) }}
-
