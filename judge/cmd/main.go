@@ -7,8 +7,8 @@ import (
 
 func newRootCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "pivas",
-		Short: "pivas daemon",
+		Use:   "judge",
+		Short: "judge daemon",
 		Run: func(cmd *cobra.Command, args []string) {
 			err := initApp()
 			if err != nil {
@@ -24,4 +24,3 @@ func main() {
 		log.Fatal(err)
 	}
 }
-

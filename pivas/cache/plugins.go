@@ -14,25 +14,25 @@ type SafeGroupPlugins struct {
 
 var GroupPlugins = &SafeGroupPlugins{M: make(map[int][]string)}
 
-func (this *SafeGroupPlugins) GetPlugins(gid int) ([]string, bool) {
-	this.RLock()
-	defer this.RUnlock()
-	plugins, exists := this.M[gid]
+func (s *SafeGroupPlugins) GetPlugins(gid int) ([]string, bool) {
+	s.RLock()
+	defer s.RUnlock()
+	plugins, exists := s.M[gid]
 	return plugins, exists
 }
 
-func (this *SafeGroupPlugins) Init() {
+func (s *SafeGroupPlugins) Init() {
 	m, err := db.QueryPlugins()
 	if err != nil {
 		return
 	}
 
-	this.Lock()
-	defer this.Unlock()
-	this.M = m
+	s.Lock()
+	defer s.Unlock()
+	s.M = m
 }
 
-// 根据hostname获取关联的插件
+// GetPlugins 根据hostname获取关联的插件
 func GetPlugins(hostname string) []string {
 	hid, exists := HostMap.GetID(hostname)
 	if !exists {

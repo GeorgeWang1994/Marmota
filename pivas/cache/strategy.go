@@ -19,21 +19,21 @@ type SafeStrategies struct {
 
 var Strategies = &SafeStrategies{M: make(map[int]*model.Strategy)}
 
-func (this *SafeStrategies) GetMap() map[int]*model.Strategy {
-	this.RLock()
-	defer this.RUnlock()
-	return this.M
+func (s *SafeStrategies) GetMap() map[int]*model.Strategy {
+	s.RLock()
+	defer s.RUnlock()
+	return s.M
 }
 
-func (this *SafeStrategies) Init(tpls map[int]*model.Template) {
+func (s *SafeStrategies) Init(tpls map[int]*model.Template) {
 	m, err := db.QueryStrategies(tpls)
 	if err != nil {
 		return
 	}
 
-	this.Lock()
-	defer this.Unlock()
-	this.M = m
+	s.Lock()
+	defer s.Unlock()
+	s.M = m
 }
 
 // QueryStrategies 获取所有的Strategy列表

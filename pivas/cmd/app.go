@@ -2,6 +2,7 @@ package main
 
 import (
 	"marmota/pivas/cc"
+	"marmota/pivas/rpc"
 )
 
 func initApp() error {
@@ -10,5 +11,6 @@ func initApp() error {
 		return err
 	}
 
+	go rpc.Start()
 	return nil
 }
