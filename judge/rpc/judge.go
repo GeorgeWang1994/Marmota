@@ -25,7 +25,7 @@ func (j *Judge) Send(items []*model.JudgeItem, resp *model.RpcResponse) error {
 			continue
 		}
 		pk := item.PK()
-		//加入到链表中
+		//加入到链表中，HistoryBigMap是干嘛用的？？？
 		store.HistoryBigMap[pk[0:2]].PushFrontAndMaintain(pk, item, remain, now)
 	}
 	return nil

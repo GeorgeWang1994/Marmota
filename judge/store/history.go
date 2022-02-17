@@ -2,6 +2,7 @@ package store
 
 import (
 	"container/list"
+	"marmota/judge/store/judge"
 	"marmota/pkg/common/model"
 	"sync"
 )
@@ -53,8 +54,9 @@ func (j *JudgeItemMap) BatchDelete(keys []string) {
 	}
 }
 
+// CleanStale 找出所有小于before的JudgeItem，左后清理掉
 func (j *JudgeItemMap) CleanStale(before int64) {
-	keys := []string{}
+	var keys []string
 
 	j.RLock()
 	for key, L := range j.M {
@@ -76,18 +78,18 @@ func (j *JudgeItemMap) PushFrontAndMaintain(key string, val *model.JudgeItem, ma
 	if linkedList, exists := j.Get(key); exists {
 		needJudge := linkedList.PushFrontAndMaintain(val, maxCount)
 		if needJudge {
-			Judge(linkedList, val, now)
+			judge.Judge(linkedList, val, now)
 		}
 	} else {
 		NL := list.New()
 		NL.PushFront(val)
 		safeList := &SafeLinkedList{L: NL}
 		j.Set(key, safeList)
-		Judge(safeList, val, now)
+		judge.Judge(safeList, val, now)
 	}
 }
 
-// 这是个线程不安全的大Map，需要提前初始化好
+// HistoryBigMap 这是个线程不安全的大Map，需要提前初始化好
 var HistoryBigMap = make(map[string]*JudgeItemMap)
 
 func InitHistoryBigMap() {

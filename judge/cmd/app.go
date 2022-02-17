@@ -3,8 +3,11 @@ package main
 import (
 	"flag"
 	"marmota/judge/cc"
+	"marmota/judge/cron"
+	"marmota/judge/cron/strategy"
 	"marmota/judge/gg"
 	"marmota/judge/rpc"
+	"marmota/judge/store"
 )
 
 func initApp() error {
@@ -16,6 +19,10 @@ func initApp() error {
 	}
 
 	gg.InitRedisConnPool()
+	store.InitHistoryBigMap()
+	go strategy.SyncStrategies()
+	go cron.CleanStale()
+
 	go rpc.Start()
 
 	return nil

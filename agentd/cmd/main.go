@@ -10,7 +10,10 @@ func newRootCmd() *cobra.Command {
 		Use:   "agentd",
 		Short: "agent daemon",
 		Run: func(cmd *cobra.Command, args []string) {
-
+			err := initApp()
+			if err != nil {
+				log.Fatalln(err)
+			}
 		},
 	}
 	return cmd

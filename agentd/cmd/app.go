@@ -1,12 +1,14 @@
 package main
 
 import (
+	"flag"
 	"marmota/agentd/cc"
 	"marmota/agentd/cron"
 )
 
 func initApp() error {
-	err := cc.ParseConfig("")
+	cfg := flag.String("c", "cfg.json", "configuration file")
+	err := cc.ParseConfig(*cfg)
 	if err != nil {
 		return err
 	}

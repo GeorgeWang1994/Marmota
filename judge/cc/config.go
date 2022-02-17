@@ -34,8 +34,8 @@ type RedisConfig struct {
 
 type AlarmConfig struct {
 	Enabled      bool         `json:"enabled"`
-	MinInterval  int64        `json:"minInterval"`
-	QueuePattern string       `json:"queuePattern"`
+	MinInterval  int64        `json:"minInterval"`  // 告警最小间隔事件
+	QueuePattern string       `json:"queuePattern"` // 告警的队列，用来告诉发往哪个redis key
 	Redis        *RedisConfig `json:"redis"`
 }
 
