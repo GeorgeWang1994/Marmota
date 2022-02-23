@@ -2,7 +2,7 @@ package tag
 
 import (
 	"bytes"
-	"marmota/pkg/utils/bufpool"
+	"marmota/pkg/utils/bufferPool"
 	"sort"
 	"strings"
 )
@@ -18,9 +18,9 @@ func SortedTags(tags map[string]string) string {
 		return ""
 	}
 
-	ret := bufpool.BufferPool.Get().(*bytes.Buffer)
+	ret := bufferPool.BufferPool.Get().(*bytes.Buffer)
 	ret.Reset()
-	defer bufpool.BufferPool.Put(ret)
+	defer bufferPool.BufferPool.Put(ret)
 
 	if size == 1 {
 		for k, v := range tags {

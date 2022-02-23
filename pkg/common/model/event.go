@@ -43,3 +43,40 @@ func (e *Event) Priority() int {
 	}
 	return e.Expression.Priority
 }
+
+func (e *Event) Tpl() *Template {
+	if e.Strategy != nil {
+		return e.Strategy.Tpl
+	}
+
+	return nil
+}
+
+func (e *Event) ActionId() int {
+	if e.Expression != nil {
+		return e.Expression.ActionId
+	}
+
+	return e.Strategy.Tpl.ActionId
+}
+
+func (e *Event) RightValue() float64 {
+	if e.Strategy != nil {
+		return e.Strategy.RightValue
+	}
+	return e.Expression.RightValue
+}
+
+func (e *Event) Operator() string {
+	if e.Strategy != nil {
+		return e.Strategy.Operator
+	}
+	return e.Expression.Operator
+}
+
+func (e *Event) Metric() string {
+	if e.Strategy != nil {
+		return e.Strategy.Metric
+	}
+	return e.Expression.Metric
+}

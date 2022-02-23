@@ -1,9 +1,11 @@
-package event
+package consume
 
 import (
 	"encoding/json"
 	log "github.com/sirupsen/logrus"
+	"marmota/alarm/api"
 	"marmota/alarm/cc"
+	"marmota/alarm/cron/event/msg_opt"
 	"marmota/alarm/gg"
 	"marmota/pkg/common/model"
 )
@@ -19,10 +21,6 @@ func consume(event *model.Event, isHigh bool) {
 		return
 	}
 
-	if action.Callback == 1 {
-		HandleCallback(event, action)
-	}
-
 	if isHigh {
 		consumeHighEvents(event, action)
 	} else {
@@ -31,65 +29,44 @@ func consume(event *model.Event, isHigh bool) {
 }
 
 // 高优先级的不做报警合并
-func consumeHighEvents(event *model.Event, action *api.Action) {
-	if action.Uic == "" {
-		return
-	}
+func consumeHighEvents(event *model.Event, action *model.Action) {
+	_, _, ims := api.ParseTeams(action.UIC)
 
-	phones, mails, ims := api.ParseTeams(action.Uic)
-
-	smsContent := GenerateSmsContent(event)
-	mailContent := GenerateMailContent(event)
 	imContent := GenerateIMContent(event)
 
-	// <=P2 才发送短信
-	if event.Priority() < 3 {
-		redi.WriteSms(phones, smsContent)
-	}
-
-	redi.WriteIM(ims, imContent)
-	redi.WriteMail(mails, smsContent, mailContent)
+	msg_opt.WriteIM(ims, imContent)
 }
 
 // 低优先级的做报警合并
-func consumeLowEvents(event *model.Event, action *api.Action) {
-	if action.Uic == "" {
-		return
-	}
-
-	// <=P2 才发送短信
-	if event.Priority() < 3 {
-		ParseUserSms(event, action)
-	}
-
+func consumeLowEvents(event *model.Event, action *model.Action) {
 	ParseUserIm(event, action)
-	ParseUserMail(event, action)
 }
 
-func ParseUserSms(event *model.Event, action *api.Action) {
-	userMap := api.GetUsers(action.Uic)
+// ParseUserIm 即使消息
+func ParseUserIm(event *model.Event, action *model.Action) {
+	userMap := api.GetUsers(action.UIC)
 
-	content := GenerateSmsContent(event)
+	content := GenerateIMContent(event)
 	metric := event.Metric()
 	status := event.Status
 	priority := event.Priority()
 
-	queue := cc.Config().Redis.UserSmsQueue
+	queue := cc.Config().Redis.UserIMQueue
 
 	rc := gg.RedisConnPool.Get()
 	defer rc.Close()
 
 	for _, user := range userMap {
-		dto := SmsDto{
+		dto := ImDto{
 			Priority: priority,
 			Metric:   metric,
 			Content:  content,
-			Phone:    user.Phone,
+			IM:       user.IM,
 			Status:   status,
 		}
 		bs, err := json.Marshal(dto)
 		if err != nil {
-			log.Error("json marshal SmsDto fail:", err)
+			log.Error("json marshal ImDto fail:", err)
 			continue
 		}
 

@@ -11,16 +11,16 @@ type SafeLinkedList struct {
 	L *list.List
 }
 
-func (this *SafeLinkedList) ToSlice() []*model.JudgeItem {
-	this.RLock()
-	defer this.RUnlock()
-	sz := this.L.Len()
+func (s *SafeLinkedList) ToSlice() []*model.JudgeItem {
+	s.RLock()
+	defer s.RUnlock()
+	sz := s.L.Len()
 	if sz == 0 {
 		return []*model.JudgeItem{}
 	}
 
 	ret := make([]*model.JudgeItem, 0, sz)
-	for e := this.L.Front(); e != nil; e = e.Next() {
+	for e := s.L.Front(); e != nil; e = e.Next() {
 		ret = append(ret, e.Value.(*model.JudgeItem))
 	}
 	return ret
@@ -28,19 +28,19 @@ func (this *SafeLinkedList) ToSlice() []*model.JudgeItem {
 
 // @param limit 至多返回这些，如果不够，有多少返回多少
 // @return bool isEnough
-func (this *SafeLinkedList) HistoryData(limit int) ([]*model.HistoryData, bool) {
+func (s *SafeLinkedList) HistoryData(limit int) ([]*model.HistoryData, bool) {
 	if limit < 1 {
 		// 其实limit不合法，此处也返回false吧，上层代码要注意
 		// 因为false通常使上层代码进入异常分支，这样就统一了
 		return []*model.HistoryData{}, false
 	}
 
-	size := this.Len()
+	size := s.Len()
 	if size == 0 {
 		return []*model.HistoryData{}, false
 	}
 
-	firstElement := this.Front()
+	firstElement := s.Front()
 	firstItem := firstElement.Value.(*model.JudgeItem)
 
 	var vs []*model.HistoryData
@@ -92,26 +92,26 @@ func (this *SafeLinkedList) HistoryData(limit int) ([]*model.HistoryData, bool) 
 	return vs, isEnough
 }
 
-func (this *SafeLinkedList) PushFront(v interface{}) *list.Element {
-	this.Lock()
-	defer this.Unlock()
-	return this.L.PushFront(v)
+func (s *SafeLinkedList) PushFront(v interface{}) *list.Element {
+	s.Lock()
+	defer s.Unlock()
+	return s.L.PushFront(v)
 }
 
 // @return needJudge 如果是false不需要做judge，因为新上来的数据不合法
-func (this *SafeLinkedList) PushFrontAndMaintain(v *model.JudgeItem, maxCount int) bool {
-	this.Lock()
-	defer this.Unlock()
+func (s *SafeLinkedList) PushFrontAndMaintain(v *model.JudgeItem, maxCount int) bool {
+	s.Lock()
+	defer s.Unlock()
 
-	sz := this.L.Len()
+	sz := s.L.Len()
 	if sz > 0 {
 		// 新push上来的数据有可能重复了，或者timestamp不对，这种数据要丢掉
-		if v.Timestamp <= this.L.Front().Value.(*model.JudgeItem).Timestamp || v.Timestamp <= 0 {
+		if v.Timestamp <= s.L.Front().Value.(*model.JudgeItem).Timestamp || v.Timestamp <= 0 {
 			return false
 		}
 	}
 
-	this.L.PushFront(v)
+	s.L.PushFront(v)
 
 	sz++
 	if sz <= maxCount {
@@ -120,20 +120,20 @@ func (this *SafeLinkedList) PushFrontAndMaintain(v *model.JudgeItem, maxCount in
 
 	del := sz - maxCount
 	for i := 0; i < del; i++ {
-		this.L.Remove(this.L.Back())
+		s.L.Remove(s.L.Back())
 	}
 
 	return true
 }
 
-func (this *SafeLinkedList) Front() *list.Element {
-	this.RLock()
-	defer this.RUnlock()
-	return this.L.Front()
+func (s *SafeLinkedList) Front() *list.Element {
+	s.RLock()
+	defer s.RUnlock()
+	return s.L.Front()
 }
 
-func (this *SafeLinkedList) Len() int {
-	this.RLock()
-	defer this.RUnlock()
-	return this.L.Len()
+func (s *SafeLinkedList) Len() int {
+	s.RLock()
+	defer s.RUnlock()
+	return s.L.Len()
 }

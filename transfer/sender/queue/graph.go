@@ -54,8 +54,8 @@ func Push2GraphSendQueue(items []*model.MetaData) {
 }
 
 // 打到Graph的数据,要根据rrdtool的特定 来限制 step、counterType、timestamp
-func convert2GraphItem(d *model.MetaData) (*model.GraphItem, error) {
-	item := &model.GraphItem{}
+func convert2GraphItem(d *model.MetaData) (*model.StoreItem, error) {
+	item := &model.StoreItem{}
 
 	item.Endpoint = d.Endpoint
 	item.Metric = d.Metric

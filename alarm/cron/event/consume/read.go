@@ -1,10 +1,11 @@
-package event
+package consume
 
 import (
 	"encoding/json"
 	"github.com/garyburd/redigo/redis"
 	log "github.com/sirupsen/logrus"
 	"marmota/alarm/cc"
+	"marmota/alarm/db"
 	"marmota/alarm/gg"
 	"marmota/pkg/common/model"
 	"time"
@@ -44,6 +45,7 @@ func ReadLowEvent() {
 	}
 }
 
+// 从redis队列中吐出事件数据，最后插入到数据库中
 func popEvent(queues []string) (*model.Event, error) {
 
 	count := len(queues)
@@ -73,9 +75,8 @@ func popEvent(queues []string) (*model.Event, error) {
 
 	log.Debugf("pop event: %s", event.String())
 
-	//insert event into database
-	eventmodel.InsertEvent(&event)
-	// events no longer saved in memory
+	//insert event into database，events no longer saved in memory
+	db.InsertEvent(&event)
 
 	return &event, nil
 }

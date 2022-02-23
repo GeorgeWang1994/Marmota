@@ -3,6 +3,8 @@ package main
 import (
 	"flag"
 	"marmota/alarm/cc"
+	"marmota/alarm/cron/event/combine"
+	"marmota/alarm/cron/event/consume"
 	"marmota/alarm/gg"
 )
 
@@ -14,5 +16,11 @@ func initApp() error {
 	}
 
 	gg.InitRedisConnPool()
+
+	go consume.ReadHighEvent()
+	go consume.ReadLowEvent()
+	go consume.ConsumeIM()
+	go combine.CombineIM()
+	// todo: clear expired event
 	return nil
 }

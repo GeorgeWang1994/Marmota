@@ -2,7 +2,7 @@ package model
 
 import (
 	"bytes"
-	"marmota/pkg/utils/bufpool"
+	"marmota/pkg/utils/bufferPool"
 	"marmota/pkg/utils/tag"
 )
 
@@ -27,9 +27,9 @@ type MetaData struct {
 }
 
 func pk(endpoint, metric string, tags map[string]string) string {
-	ret := bufpool.BufferPool.Get().(*bytes.Buffer)
+	ret := bufferPool.BufferPool.Get().(*bytes.Buffer)
 	ret.Reset()
-	defer bufpool.BufferPool.Put(ret)
+	defer bufferPool.BufferPool.Put(ret)
 
 	if tags == nil || len(tags) == 0 {
 		ret.WriteString(endpoint)
