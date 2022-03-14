@@ -5,8 +5,8 @@ import (
 	"marmota/transfer/sender/queue"
 )
 
-// TODO 添加对发送任务的控制,比如stop等
-func startSendTasks() {
+// StartSendTasks TODO 添加对发送任务的控制,比如stop等
+func StartSendTasks() {
 	cfg := cc.Config()
 	// init semaphore
 	judgeConcurrent := cfg.Judge.MaxConns

@@ -11,6 +11,19 @@ import (
 	"marmota/pkg/common/model"
 )
 
+/**
+
+judge组件在做告警判定的时候，会解析配置的告警策略，生成一个fn，由fn.Compute()计算是否触发，比如：
+
+配置 all(#3)>90 表示最近3次的数据都 > 90 触发；
+配置 max(#3)>90 表示最近3次的最大值 > 90 触发；
+配置 min(#3)<10 表示最近3次的最小值 < 10 触发；
+配置 avg(#3)>90 标识最近3次的avg > 90 触发；
+
+https://segmentfault.com/a/1190000040681704
+
+*/
+
 func CheckStrategy(L *store.SafeLinkedList, firstItem *model.JudgeItem, now int64) {
 	key := fmt.Sprintf("%s/%s", firstItem.Endpoint, firstItem.Metric)
 	strategyMap := gg.StrategyMap.Get()
