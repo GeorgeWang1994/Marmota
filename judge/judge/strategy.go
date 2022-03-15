@@ -6,8 +6,8 @@ import (
 	"log"
 	"marmota/judge/cc"
 	"marmota/judge/gg"
+	"marmota/judge/judge/function"
 	"marmota/judge/store"
-	"marmota/judge/store/function"
 	"marmota/pkg/common/model"
 )
 
@@ -20,11 +20,20 @@ judge组件在做告警判定的时候，会解析配置的告警策略，生成
 配置 min(#3)<10 表示最近3次的最小值 < 10 触发；
 配置 avg(#3)>90 标识最近3次的avg > 90 触发；
 
+
+时间的数据结构则用zset来表示，member为事件ID，score为事件数据
+
+time(#3) 最近3分钟才触发，不特定事件类型，不特定事件数据（通过在redis设置过期时间来实现）
+time(#3) > ~90 最近3分钟中的数据均超过90才会触发（需要将某个特定的数据存储到redis中，并且设置过期事件，通过redis查询）
+time(#3) < ~10 最近3分钟中的数据均小于10才会触发（需要将某个特定的数据存储到redis中，并且设置过期事件，通过redis查询）
+avg(time(#3)) > 90 最近3分钟中的数据的平均值大于90才会触发（需要将某个特定的数据存储到redis中，并且设置过期事件，通过redis查询）
+
 https://segmentfault.com/a/1190000040681704
 
 */
 
 func CheckStrategy(L *store.SafeLinkedList, firstItem *model.JudgeItem, now int64) {
+	// 通过key找到策略
 	key := fmt.Sprintf("%s/%s", firstItem.Endpoint, firstItem.Metric)
 	strategyMap := gg.StrategyMap.Get()
 	strategies, exists := strategyMap[key]
@@ -32,6 +41,7 @@ func CheckStrategy(L *store.SafeLinkedList, firstItem *model.JudgeItem, now int6
 		return
 	}
 
+	// 遍历策略列表
 	for _, s := range strategies {
 		// 因为key仅仅是endpoint和metric，所以得到的strategies并不一定是与当前judgeItem相关的
 		// 比如lg-dinp-docker01.bj配置了两个proc.num的策略，一个name=docker，一个name=agent

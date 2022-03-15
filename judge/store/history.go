@@ -2,7 +2,7 @@ package store
 
 import (
 	"container/list"
-	"marmota/judge/store/judge"
+	"marmota/judge/judge"
 	"marmota/pkg/common/model"
 	"sync"
 )
@@ -74,6 +74,7 @@ func (j *JudgeItemMap) CleanStale(before int64) {
 	j.BatchDelete(keys)
 }
 
+// PushFrontAndMaintain 加入到链表中，并且进行judge判断是否需要策略
 func (j *JudgeItemMap) PushFrontAndMaintain(key string, val *model.JudgeItem, maxCount int, now int64) {
 	if linkedList, exists := j.Get(key); exists {
 		needJudge := linkedList.PushFrontAndMaintain(val, maxCount)
@@ -92,6 +93,8 @@ func (j *JudgeItemMap) PushFrontAndMaintain(key string, val *model.JudgeItem, ma
 // HistoryBigMap 这是个线程不安全的大Map，需要提前初始化好
 var HistoryBigMap = make(map[string]*JudgeItemMap)
 
+// InitHistoryBigMap 初始化超大map，并且每个JudgeItemMap也是个map，包含多个链表
+// ??? todo: 为什么没有大于f的字母
 func InitHistoryBigMap() {
 	arr := []string{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f"}
 	for i := 0; i < 16; i++ {
